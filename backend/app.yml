@@ -1,0 +1,12 @@
+server:
+  ip_address: "0.0.0.0"
+  port: 8000
+
+# bert_ner:
+#   base_model: "model/bert-base-uncased"  
+#   model_ckpt: "model/bert_ner.h5"
+#   enc_tag: "model/enc_tag.h5"
+#   max_len: 128
+
+log:
+  app: "app.log"
