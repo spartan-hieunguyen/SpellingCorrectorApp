@@ -34,10 +34,13 @@ class AutoCorrection:
                                                  bid_model_name=BID)
 
     def select_model(self):
-        model = PhoBertEncoder(n_words=len(self.word_tokenizer.word_index),
-                                n_labels_error=2,
-                                use_detection_context = self.use_detection_context
-                                ).to(self.device)
+        if (self.model_name == "phobert"):
+            model = PhoBertEncoder(n_words=self.word_tokenizer.num_words,
+                                    n_labels_error=2,
+                                    use_detection_context = self.use_detection_context
+                                    ).to(self.device)
+        elif (self.model_name == "phobert_corrector"):
+            model = PhoBertCorrector(self.word_tokenizer.num_words)
         return model
 
     def load_model(self, path):
@@ -51,7 +54,7 @@ class AutoCorrection:
         data = []
         word_ids = self.phobert_tokenizer.encode(sentence)
         data = torch.tensor(word_ids, dtype=torch.long).to(self.device).unsqueeze(dim=0)
-        batch_ids = batch_ids = [split_token(self.phobert_tokenizer, sentence)]
+        batch_ids = [split_token(self.phobert_tokenizer, sentence)]
         return data, None, batch_ids
 
     def restore_sentence(self, sentence, mark_replaces):
@@ -118,13 +121,24 @@ class AutoCorrection:
                 words[idx] = word_norm
         original_sentence = " ".join(words)
         data = self.make_inputs(original_sentence)
-        detection_outputs, correction_outputs = self.model(*data)
-        detection_outputs, correction_outputs = torch.softmax(detection_outputs, dim=-1), torch.softmax(
-            correction_outputs, dim=-1)
-        sentence, detection_predict, correction_predict = self.get_result(convert_word, original_sentence,
-                                                                          detection_outputs.squeeze(dim=0),
-                                                                          correction_outputs.squeeze(dim=0))
-
+        if self.model_name == "phobert":
+            detection_outputs, correction_outputs = self.model(*data)
+            detection_outputs, correction_outputs = torch.softmax(detection_outputs, dim=-1), torch.softmax(
+                correction_outputs, dim=-1)
+            # print('detection_outputs', detection_outputs)
+            # print('correction_outputs', correction_outputs)
+            sentence, detection_predict, correction_predict = self.get_result(convert_word, original_sentence,
+                                                                            detection_outputs.squeeze(dim=0),
+                                                                            correction_outputs.squeeze(dim=0))
+            # print('detection_predict', detection_predict)
+            # print(correction_predict)
+        elif self.model_name == "phobert_correction":
+            correction_outputs = self.model(*data)
+            correction_prob, correction_index = get_label(detection_outputs)
+            words = original_sentence.split()
+            word_predict = self.word_tokenizer.sequences_to_texts([correction_index])[0].split()
+            correction_predict = ' '.join(word_predict)
+            detection_predict = None
         return sentence, detection_predict, correction_predict
 
     def normalize(self, sentence):
@@ -209,7 +223,7 @@ class AutoCorrection:
         input_sentences = preprocess(input_sentences)
         pairs = self.preprocess_sentences(input_sentences)
         results = ""
-        print(pairs)
+        # print(pairs)
         for original_sentence, data in pairs:
             output, _, _ = self.forward(original_sentence.lower())
             results = results + ' ' + self.match_case(original_sentence, output, data)

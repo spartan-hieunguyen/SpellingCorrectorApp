@@ -131,3 +131,8 @@ def split_token(tokenizer, sentence: str):
             result.append(len(tokens) - start)
     assert sum(result) == len(tokens), "Number tokens not equal"
     return result
+
+def get_label(predict: Tensor):
+    predict = torch.softmax(predict, dim=-1)
+    predict = torch.argmax(predict, dim=-1)
+    return predict.reshape(-1)
