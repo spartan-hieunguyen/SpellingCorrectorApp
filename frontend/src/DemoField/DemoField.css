@@ -1,0 +1,18 @@
+#demo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    flex-wrap: wrap;
+}
+
+#demo-container-input {
+    width: 40%;
+    min-width: 400px;
+    min-height: 500px;
+}
+#demo-container-output {
+    width: 40%;
+    min-width: 400px;
+    min-height: 500px;
+}

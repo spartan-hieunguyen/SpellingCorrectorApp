@@ -1,0 +1,12 @@
+.App {
+  text-align: center;
+}
+
+.App__header {
+  background-color: white;
+}
+
+.App__content {
+  background-color: rgb(242, 241, 241);
+  height: 100vh;
+}
