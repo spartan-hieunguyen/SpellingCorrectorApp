@@ -1,42 +1,54 @@
 import "./OutputAnnotation.css";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 
 function OutputAnnotation({text, spans}) {
+  console.log("i rerendered")
   const [output, setOutput] = useState(<></>)
-  const createJSXfromNE = (text, spans) => {
+  
+  const createReactText = useCallback((text) => {
+    return React.createElement('text', null, text.replace(/ /g, "\u00a0"));
+  },[])
+
+  const trimAndAddNewline = useCallback((strings) => {
+    let ans = [];
+    let strs = strings.split('\n');
+    strs.forEach((s, i) => {
+      if (s.length > 0)
+        ans.push(createReactText(s));
+      if (strs.length > 1 && i !== s.length - 1) 
+        ans.push(React.createElement('br'));
+    })
+    return ans;
+  },[createReactText])
+
+  const annotateText = useCallback((text, spans) => {
       let listOfJSX = [];
       let offset = 0;
 
       spans.forEach(({start, end}) => {
         const entity = text.slice(start, end);
-        const fragments = text.slice(offset, start).split('\n');
-        fragments.forEach((fragment, i) => {
-          listOfJSX.push(React.createElement('text', null, fragment));
-          if (fragments.length > 1 && i !== fragments.length - 1) 
-            listOfJSX.push(React.createElement('br'));
-        });
+        let fragments = trimAndAddNewline(text.slice(offset, start));
+        listOfJSX.push(...fragments);
         const mark = React.createElement(
           'span',
-          {'class': "error__props"},
-          React.createElement('text', null, entity));
+          {'className': "error__props"},
+          createReactText(entity));
         listOfJSX.push(mark);
         offset = end;
       });
 
-      listOfJSX.push(React.createElement('text', null, text.slice(offset, text.length)));
-
+      const remains = trimAndAddNewline(text.slice(offset, text.length));
+      listOfJSX.push(...remains);
       return <>{listOfJSX}</>
-  }
-  
+  }, [createReactText,trimAndAddNewline])
+
   useEffect(() => {
     if (text && text.length !== 0 && spans && spans.length !== 0) {
-      console.log(text)
-      const newAnnotation = createJSXfromNE(text, spans);
-      setOutput(newAnnotation);
+      setOutput(annotateText(text, spans));
       return;
     }
     setOutput(<text>{text}</text>)
-  }, [text, spans])
+  }, [text, spans, annotateText])
 
   return (
     <div className={"output__box"}>

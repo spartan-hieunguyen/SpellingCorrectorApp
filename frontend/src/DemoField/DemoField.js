@@ -1,28 +1,28 @@
 import './DemoField.css'
-import { MODEL } from '../constants';
-import React, {useState} from 'react';
+import { MODEL_NAME } from '../constants';
+import React, {useCallback, useState} from 'react';
 import OutputAnnotation from './OutputAnnotation/OutputAnnotation';
 import { Box, Button, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 export default function DemoField() {
     const [input, setInput] = useState('');
     const [output, setOutput] = useState('');
-    const [modelOption, setModelOption] = useState(MODEL.TOKEN_CORRECTOR);
+    const [modelOption, setModelOption] = useState(MODEL_NAME.TOKEN_CORRECTOR);
     const [hasBeenModified, setHasBeenModified] = useState(true);
 
 
-    const handleChangeInput = (event) => {
+    const handleChangeInput = useCallback((event) => {
         // logic
-        setInput(event.target.value)
+        setInput(event.target.value);
         if (!hasBeenModified) {
           setHasBeenModified(true);
           // console.log("modifying")
         }
-    }
+    },[hasBeenModified])
 
-    const handleChangeModel = (event) => {
+    const handleChangeModel = useCallback((event) => {
       setModelOption(event.target.value);
-    }
+    },[])
 
     function submit() {
       // const requestOptions = {
@@ -41,20 +41,20 @@ export default function DemoField() {
       //     console.log(error)
       //   })
       if (!hasBeenModified) return;
-      setOutput(input);
+      setOutput(input.trim());
       setHasBeenModified(false);
       console.log(output)
       // console.log("submiting")
     }
   
     return (
-        <Box sx={{display: "flex", flexWrap: "wrap", justifyContent:"center", alignItems:"center", columnGap: "10px", rowGap: "30px", paddingTop: "50px"}}>
-          <Box sx={{width: "40%", height:"575px", minWidth:"450px", display: "flex", flexDirection:"column", justifyContent:"space-between"}}>
+        <Box sx={{display: "flex", flexWrap: "wrap", justifyContent:"center", alignItems:"center", columnGap: "10px", rowGap: "30px", paddingTop: "30px"}}>
+          <Box sx={{width: "40%", height:"550px", minWidth:"450px", display: "flex", flexDirection:"column", justifyContent:"space-between"}}>
               <TextField
               variant="outlined"
               multiline={true}
-              minRows={16}
-              maxRows={16}
+              minRows={15}
+              maxRows={15}
               value={input}
               onChange={handleChangeInput}
               fullWidth
@@ -68,20 +68,20 @@ export default function DemoField() {
               labelId="select-model"
               id="select-model"
               value={modelOption}
-              defaultValue={MODEL.TOKEN_CORRECTOR}
+              defaultValue={MODEL_NAME.TOKEN_CORRECTOR}
               label="Model"
               onChange={handleChangeModel}
               fullWidth
               >
-              <MenuItem value={MODEL.CORRECTOR}>{MODEL.CORRECTOR}</MenuItem>
-              <MenuItem value={MODEL.TOKEN}>{MODEL.TOKEN}</MenuItem>
-              <MenuItem value={MODEL.TOKEN_CORRECTOR}>{MODEL.TOKEN_CORRECTOR}</MenuItem>
+              <MenuItem value={MODEL_NAME.CORRECTOR}>{MODEL_NAME.CORRECTOR}</MenuItem>
+              <MenuItem value={MODEL_NAME.TOKEN}>{MODEL_NAME.TOKEN}</MenuItem>
+              <MenuItem value={MODEL_NAME.TOKEN_CORRECTOR}>{MODEL_NAME.TOKEN_CORRECTOR}</MenuItem>
             </Select>
             </FormControl>
             <Button fullWidth variant="contained" onClick={submit}>Check</Button>
           </Box>
 
-          <Box sx={{width: "40%", minWidth:"450px", height:"575px", border:"1px solid silver", borderRadius:"5px"}} label={modelOption}>
+          <Box sx={{width: "40%", minWidth:"450px", height:"550px", border:"1px solid silver", borderRadius:"5px"}} label={modelOption}>
             <OutputAnnotation text={output} spans={[{"start":0,"end":2}]}/>
           </Box>
         </Box>

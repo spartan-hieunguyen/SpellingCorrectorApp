@@ -12,9 +12,8 @@ function App() {
         <Typography variant="h4" component="div" sx={{ flexGrow: 1, paddingTop: "50px", fontWeight: 'bold' }}>
             Demo
         </Typography>
-
         <DemoField/>
-        <div style={{minHeight: "100px"}}></div>
+        <div style={{minHeight: "20px"}}></div>
       </div>
     </div>
   );
