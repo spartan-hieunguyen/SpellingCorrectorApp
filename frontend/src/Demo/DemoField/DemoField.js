@@ -49,7 +49,7 @@ export default function DemoField() {
   
     return (
         <Box sx={{display: "flex", flexWrap: "wrap", justifyContent:"center", alignItems:"center", columnGap: "10px", rowGap: "30px", paddingTop: "30px"}}>
-          <Box sx={{width: "40%", height:"550px", minWidth:"450px", display: "flex", flexDirection:"column", justifyContent:"space-between"}}>
+          <Box sx={{width: "40%", height:"560px", minWidth:"450px", display: "flex", flexDirection:"column", justifyContent:"space-between"}}>
               <TextField
               variant="outlined"
               multiline={true}
@@ -81,7 +81,7 @@ export default function DemoField() {
             <Button fullWidth variant="contained" onClick={submit}>Check</Button>
           </Box>
 
-          <Box sx={{width: "40%", minWidth:"450px", height:"550px", border:"1px solid silver", borderRadius:"5px"}} label={modelOption}>
+          <Box sx={{width: "40%", minWidth:"450px", height:"560px", border:"1px solid silver", borderRadius:"5px"}} label={modelOption}>
             <OutputAnnotation text={output} spans={[{"start":0,"end":2}]}/>
           </Box>
         </Box>
