@@ -2,7 +2,6 @@ import "./OutputAnnotation.css";
 import React, {useEffect, useState, useCallback} from "react";
 
 function OutputAnnotation({text, spans}) {
-  console.log("i rerendered")
   const [output, setOutput] = useState(<></>)
   
   const createReactText = useCallback((text) => {
@@ -47,7 +46,7 @@ function OutputAnnotation({text, spans}) {
       setOutput(annotateText(text, spans));
       return;
     }
-    setOutput(<text>{text}</text>)
+    setOutput(text)
   }, [text, spans, annotateText])
 
   return (

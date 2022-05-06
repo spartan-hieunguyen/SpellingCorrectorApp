@@ -6,8 +6,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 // import { shadows } from '@mui/system';
-
-export default function Header() {
+import {useNavigate} from "react-router-dom"
+export default function Header({handleChange}) {
+  let navigate = useNavigate();
+  const handleTabChange = (event) => {
+    navigate(`/home/${event.target.value}`)
+  }
   return (
     <Box sx={{ flexGrow: 1, boxShadow: 2 }} >
       <AppBar position="static" color="inherit">
@@ -15,8 +19,8 @@ export default function Header() {
           <Typography variant="h5" component="div" sx={{ flexGrow: 1 }} align="left" fontWeight={"bold"}>
             Contextual Spelling Correction
           </Typography>
-          <Button color="inherit">Demo</Button>
-          <Button color="inherit">About</Button>
+          <Button color="inherit" onClick={handleTabChange} value={"demo"}>Demo</Button>
+          <Button color="inherit" onClick={handleTabChange} value={"about"}>About</Button>
         </Toolbar>
       </AppBar>
     </Box>

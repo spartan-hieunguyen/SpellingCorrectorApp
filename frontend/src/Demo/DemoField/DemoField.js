@@ -1,5 +1,5 @@
 import './DemoField.css'
-import { MODEL_NAME } from '../constants';
+import { MODEL_INDEX, MODEL_NAME } from '../../constants';
 import React, {useCallback, useState} from 'react';
 import OutputAnnotation from './OutputAnnotation/OutputAnnotation';
 import { Box, Button, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
@@ -7,7 +7,7 @@ import { Box, Button, TextField, Select, MenuItem, InputLabel, FormControl } fro
 export default function DemoField() {
     const [input, setInput] = useState('');
     const [output, setOutput] = useState('');
-    const [modelOption, setModelOption] = useState(MODEL_NAME.TOKEN_CORRECTOR);
+    const [modelOption, setModelOption] = useState(MODEL_INDEX.TOKEN_CORRECTOR);
     const [hasBeenModified, setHasBeenModified] = useState(true);
 
 
@@ -25,25 +25,25 @@ export default function DemoField() {
     },[])
 
     function submit() {
-      // const requestOptions = {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ text: input }),
-      // };
-      // // console.log(text)
-      // fetch("http://0.0.0.0:8000/correct", requestOptions)
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     console.log(data)
-      //     setOutput(data)}
-      //     )
-      //   .catch((error) => {
-      //     console.log(error)
-      //   })
-      if (!hasBeenModified) return;
-      setOutput(input.trim());
-      setHasBeenModified(false);
-      console.log(output)
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: input, model: modelOption }),
+      };
+      // console.log(text)
+      fetch("http://0.0.0.0:8000/correct", requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+          setOutput(data)}
+          )
+        .catch((error) => {
+          console.log(error)
+        })
+      // if (!hasBeenModified) return;
+      // setOutput(input.trim());
+      // setHasBeenModified(false);
+      // console.log(output)
       // console.log("submiting")
     }
   
@@ -68,14 +68,14 @@ export default function DemoField() {
               labelId="select-model"
               id="select-model"
               value={modelOption}
-              defaultValue={MODEL_NAME.TOKEN_CORRECTOR}
+              defaultValue={MODEL_INDEX.TOKEN_CORRECTOR}
               label="Model"
               onChange={handleChangeModel}
               fullWidth
               >
-              <MenuItem value={MODEL_NAME.CORRECTOR}>{MODEL_NAME.CORRECTOR}</MenuItem>
-              <MenuItem value={MODEL_NAME.TOKEN}>{MODEL_NAME.TOKEN}</MenuItem>
-              <MenuItem value={MODEL_NAME.TOKEN_CORRECTOR}>{MODEL_NAME.TOKEN_CORRECTOR}</MenuItem>
+              <MenuItem value={MODEL_INDEX.CORRECTOR}>{MODEL_NAME.CORRECTOR}</MenuItem>
+              <MenuItem value={MODEL_INDEX.TOKEN}>{MODEL_NAME.TOKEN}</MenuItem>
+              <MenuItem value={MODEL_INDEX.TOKEN_CORRECTOR}>{MODEL_NAME.TOKEN_CORRECTOR}</MenuItem>
             </Select>
             </FormControl>
             <Button fullWidth variant="contained" onClick={submit}>Check</Button>
