@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
-import { Box, Button, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import './DemoField.css'
 import { MODEL } from '../constants';
+import React, {useState} from 'react';
+import OutputAnnotation from './OutputAnnotation/OutputAnnotation';
+import { Box, Button, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 export default function DemoField() {
     const [input, setInput] = useState('');
@@ -15,7 +16,7 @@ export default function DemoField() {
         setInput(event.target.value)
         if (!hasBeenModified) {
           setHasBeenModified(true);
-          console.log("modifiuing")
+          // console.log("modifying")
         }
     }
 
@@ -42,12 +43,13 @@ export default function DemoField() {
       if (!hasBeenModified) return;
       setOutput(input);
       setHasBeenModified(false);
-      console.log("submiting")
+      console.log(output)
+      // console.log("submiting")
     }
   
     return (
-        <Box sx={{display: "flex", flexWrap: "wrap", justifyContent:"center", alignItems:"center", columnGap: "10px", rowGap: "20px", paddingTop: "50px" }}>
-          <Box sx={{width: "40%", height:"100%", minWidth:"450px"}}>
+        <Box sx={{display: "flex", flexWrap: "wrap", justifyContent:"center", alignItems:"center", columnGap: "10px", rowGap: "30px", paddingTop: "50px"}}>
+          <Box sx={{width: "40%", height:"575px", minWidth:"450px", display: "flex", flexDirection:"column", justifyContent:"space-between"}}>
               <TextField
               variant="outlined"
               multiline={true}
@@ -60,7 +62,6 @@ export default function DemoField() {
               InputLabelProps={{shrink: true}}
               InputProps={{ style: { fontSize: "1.2rem" } }}
             />
-            <div style={{height: "10px"}}></div>
             <FormControl  fullWidth>
             <InputLabel id="select-model" sx={{shrink: true}}>Model</InputLabel>
             <Select
@@ -77,29 +78,12 @@ export default function DemoField() {
               <MenuItem value={MODEL.TOKEN_CORRECTOR}>{MODEL.TOKEN_CORRECTOR}</MenuItem>
             </Select>
             </FormControl>
-            <div style={{height: "10px"}}></div>
             <Button fullWidth variant="contained" onClick={submit}>Check</Button>
           </Box>
-          <Box  sx={{width: "40%", minWidth:"450px"}}>
-            <TextField
-                  variant="outlined"
-                  multiline={true}
-                  minRows={20}
-                  maxRows={20}
-                  value={output}
-                  fullWidth 
-                  disabled
-                  InputLabelProps={{shrink: true}}
-                  InputProps={{disableUnderline: true, style: {fontSize: "1.2rem"}}}
-                  sx={{
-                    "& .MuiInputBase-input.Mui-disabled": {
-                      WebkitTextFillColor: "black",
-                    },
-                  }}
-                  label={modelOption}
-                />   
-          </Box>
 
+          <Box sx={{width: "40%", minWidth:"450px", height:"575px", border:"1px solid silver", borderRadius:"5px"}} label={modelOption}>
+            <OutputAnnotation text={output} spans={[{"start":0,"end":2}]}/>
+          </Box>
         </Box>
     )
 }

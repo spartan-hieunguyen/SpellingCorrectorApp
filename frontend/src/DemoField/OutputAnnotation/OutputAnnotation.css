@@ -1,0 +1,148 @@
+.output__box {
+     line-height: 1;
+     text-align: left;
+     padding-top: 15px;
+     padding-left: 15px;
+     font-size: 1.2rem;
+}
+
+.error__props {
+     text-decoration: underline red dotted;
+     text-underline-offset: 2px;
+     color: red;
+}
+/* [data-entity] {
+     padding: 0.25em 0.35em;
+     margin: 0px 0.25em;
+     line-height: 1;
+     display: inline-block;
+     border-radius: 0.25em;
+     border: 1px solid;
+}
+
+[data-entity]::after {
+     box-sizing: border-box;
+     content: attr(data-entity);
+     font-size: 0.6em;
+     line-height: 1;
+     padding: 0.35em;
+     border-radius: 0.35em;
+     text-transform: uppercase;
+     display: inline-block;
+     vertical-align: middle;
+     margin: 0px 0px 0.1rem 0.5rem;
+}
+
+[data-entity][data-entity="geo"] {
+     background: rgba(224, 0, 132, 0.2);
+     border-color: rgb(224, 0, 132);
+}
+
+[data-entity][data-entity="geo"]::after {
+     background: rgb(224, 0, 132);
+}
+
+[data-entity][data-entity="org"] {
+     background: rgba(67, 198, 252, 0.2);
+     border-color: rgb(67, 198, 252);
+}
+
+[data-entity][data-entity="org"]::after {
+     background: rgb(67, 198, 252);
+}
+
+[data-entity][data-entity="per"] {
+     background: rgba(166, 226, 45, 0.2);
+     border-color: rgb(166, 226, 45);
+}
+
+[data-entity][data-entity="per"]::after {
+     background: rgb(166, 226, 45);
+}
+
+[data-entity][data-entity="gpe"] {
+     background: rgba(253, 151, 32, 0.2);
+     border-color: rgb(253, 151, 32);
+}
+
+[data-entity][data-entity="gpe"]::after {
+     background: rgb(253, 151, 32);
+}
+
+[data-entity][data-entity="tim"] {
+     background: rgba(11, 182, 76, 0.2);
+     border-color: rgb(11, 182, 76);
+}
+
+[data-entity][data-entity="tim"]::after {
+     background: rgb(11, 182, 76);
+}
+
+[data-entity][data-entity="art"] {
+     background: rgba(253, 151, 32, 0.2);
+     border-color: rgb(253, 151, 32);
+}
+
+[data-entity][data-entity="art"]::after {
+     background: rgb(253, 151, 32);
+}
+
+[data-entity][data-entity="eve"] {
+     background: rgba(255, 204, 0, 0.2);
+     border-color: rgb(255, 204, 0);
+}
+
+[data-entity][data-entity="eve"]::after {
+     background: rgb(255, 204, 0);
+}
+
+[data-entity][data-entity="art"] {
+     background: rgba(153, 153, 153, 0.2);
+     border-color: rgb(153, 153, 153);
+}
+
+[data-entity][data-entity="art"]::after {
+     background: rgb(153, 153, 153);
+}
+
+[data-entity][data-entity="npe"] {
+     background: rgba(178, 87, 206, 0.2);
+     order-color: rgb(178, 87, 206);
+}
+
+[data-entity][data-entity="npe"]::after {
+    background: rgb(178, 87, 206);
+} */
+
+/*[data-entity][data-entity="quantity"] {*/
+/*     background: rgba(153, 153, 153, 0.2);*/
+/*     border-color: rgb(153, 153, 153);*/
+/*}*/
+
+/*[data-entity][data-entity="quantity"]::after {*/
+/*     background: rgb(153, 153, 153);*/
+/*}*/
+
+/*[data-entity][data-entity="ordinal"] {*/
+/*     background: rgba(153, 153, 153, 0.2);*/
+/*     border-color: rgb(153, 153, 153);*/
+/*}*/
+
+/*[data-entity][data-entity="ordinal"]::after {*/
+/*     background: rgb(153, 153, 153);*/
+/*}*/
+
+/*[data-entity][data-entity="cardinal"] {*/
+/*     background: rgba(153, 153, 153, 0.2);*/
+/*     border-color: rgb(153, 153, 153);*/
+/*}*/
+
+/*[data-entity][data-entity="cardinal"]::after {*/
+/*     background: rgb(153, 153, 153);*/
+/*}*/
+
+/* body {
+    padding: 25px 50px;
+    font: 18px Helvetica, Arial, sans-serif;
+} */
+
