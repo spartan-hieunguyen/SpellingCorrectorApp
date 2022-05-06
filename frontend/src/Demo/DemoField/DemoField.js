@@ -8,17 +8,11 @@ export default function DemoField() {
     const [input, setInput] = useState('');
     const [output, setOutput] = useState('');
     const [modelOption, setModelOption] = useState(MODEL_INDEX.TOKEN_CORRECTOR);
-    const [hasBeenModified, setHasBeenModified] = useState(true);
 
 
     const handleChangeInput = useCallback((event) => {
-        // logic
         setInput(event.target.value);
-        if (!hasBeenModified) {
-          setHasBeenModified(true);
-          // console.log("modifying")
-        }
-    },[hasBeenModified])
+    },[])
 
     const handleChangeModel = useCallback((event) => {
       setModelOption(event.target.value);
@@ -35,16 +29,11 @@ export default function DemoField() {
         .then((response) => response.json())
         .then((data) => {
           console.log(data)
-          setOutput(data)}
-          )
+          setOutput(data)
+        })
         .catch((error) => {
           console.log(error)
         })
-      // if (!hasBeenModified) return;
-      // setOutput(input.trim());
-      // setHasBeenModified(false);
-      // console.log(output)
-      // console.log("submiting")
     }
   
     return (
@@ -82,7 +71,11 @@ export default function DemoField() {
           </Box>
 
           <Box sx={{width: "40%", minWidth:"450px", height:"560px", border:"1px solid silver", borderRadius:"5px"}} label={modelOption}>
-            <OutputAnnotation text={output} spans={[{"start":0,"end":2}]}/>
+            {/* <OutputAnnotation text={"Thông qua công tác tuyên truyền, vận động này phụ huynh sẽ hiểu rõ hơn tầm quan trọng của việc giáo dục ý thức bảo vệ môi trường cho trẻ không phải chỉ ở phía nhà trường mà còn ở gia đình, góp phần vào việc gìn giữ môi trường xanh, sạch, đẹp."} spans={[{"start":226,"end":230}]}/> */}
+            <OutputAnnotation
+            text={output.text}
+            spans={output.align}
+            ></OutputAnnotation>
           </Box>
         </Box>
     )

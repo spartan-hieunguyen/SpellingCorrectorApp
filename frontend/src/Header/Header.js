@@ -7,10 +7,12 @@ import Typography from '@mui/material/Typography';
 // import Button from '@mui/material/Button';
 import { Tabs, Tab } from "@mui/material";
 // import { shadows } from '@mui/system';
-import {useNavigate} from "react-router-dom"
-export default function Header({handleChange}) {
+import {useNavigate, useMatch} from "react-router-dom"
+
+export default function Header() {
   let navigate = useNavigate();
-  const [value, setValue] = React.useState('demo');
+  let match = useMatch('/home/:page');
+  const [value, setValue] = React.useState(match.params.page);
 
   const handleTabChange = (event, newValue) => {
     setValue(newValue);
@@ -22,10 +24,7 @@ export default function Header({handleChange}) {
         <Toolbar>
           <Typography variant="h5" component="div" sx={{ flexGrow: 1 }} align="left" fontWeight={"bold"}>
             Contextual Spelling Correction
-          </Typography>
-          {/* <Button color="inherit" onClick={handleTabChange} value={"demo"}>Demo</Button>
-          <Button color="inherit" onClick={handleTabChange} value={"about"}>About</Button> */}
-          
+          </Typography>          
           <Tabs
             value={value}
             onChange={handleTabChange}

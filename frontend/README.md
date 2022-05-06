@@ -16,10 +16,11 @@ Response should contain
     "result": {
         "text": corrected text,
         "align": [
-            {"start": i_1, "end": j_1}, 
-            {"start": i_2, "end": j_2}, 
+            {"start": 0, "end": 3}, 
+            {"start": 5, "end": 6}, 
             ...
         ]
     }
 }
 ```
+**Align by character**

@@ -1,11 +1,11 @@
 import "./OutputAnnotation.css";
 import React, {useEffect, useState, useCallback} from "react";
-
+import { Typography } from "@mui/material";
 function OutputAnnotation({text, spans}) {
   const [output, setOutput] = useState(<></>)
   
   const createReactText = useCallback((text) => {
-    return React.createElement('text', null, text.replace(/ /g, "\u00a0"));
+    return <React.Fragment>{text}</React.Fragment>;
   },[])
 
   const trimAndAddNewline = useCallback((strings) => {
@@ -47,12 +47,15 @@ function OutputAnnotation({text, spans}) {
       return;
     }
     setOutput(text)
+    console.log(annotateText(text, spans))
   }, [text, spans, annotateText])
 
   return (
-    <div className={"output__box"}>
+    // <div className={"output__box"}>
+    // </div>
+    <Typography paragraph align="left" sx={{fontSize: '1.2rem', margin:"10px", marginTop: "15px"}}>
     {output}
-    </div>
+    </Typography>
   )
 }
 
