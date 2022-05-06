@@ -9,11 +9,12 @@ function App() {
         <Header></Header>
       </div>
       <div className="App__content">
-        <Typography variant="h5" component="div" sx={{ flexGrow: 1, paddingTop: "50px", fontWeight: 'bold' }}>
+        <Typography variant="h4" component="div" sx={{ flexGrow: 1, paddingTop: "50px", fontWeight: 'bold' }}>
             Demo
         </Typography>
 
         <DemoField/>
+        <div style={{minHeight: "100px"}}></div>
       </div>
     </div>
   );
