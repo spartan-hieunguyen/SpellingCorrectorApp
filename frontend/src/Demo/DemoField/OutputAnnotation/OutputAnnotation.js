@@ -1,6 +1,7 @@
 import "./OutputAnnotation.css";
 import React, {useEffect, useState, useCallback} from "react";
 import { Typography } from "@mui/material";
+
 function OutputAnnotation({text, spans}) {
   const [output, setOutput] = useState(<></>)
   
@@ -44,10 +45,11 @@ function OutputAnnotation({text, spans}) {
   useEffect(() => {
     if (text && text.length !== 0 && spans && spans.length !== 0) {
       setOutput(annotateText(text, spans));
+      console.log(text);
+      console.log(spans);
       return;
     }
     setOutput(text)
-    console.log(annotateText(text, spans))
   }, [text, spans, annotateText])
 
   return (

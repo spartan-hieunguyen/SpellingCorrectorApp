@@ -42,7 +42,7 @@ FINE_TUNED = True
 # Batch size samples
 BATCH_SIZE=64
 
-DOMAIN = '1'
+DOMAIN = '0'
 N_WORDS = {
     'luanvan': 323430,
     'general': 57981
@@ -52,6 +52,6 @@ N_WORDS = {
 BERT_PRETRAINED = 'vinai/phobert-base'
 
 MODEL_SAVE_PATH = 'autocorrection/weights/model/'
-SOFT_MASKED_BERT_MODEL = f'model{DOMAIN}.pth'
+MODEL_CHECKPOINT = f'model{DOMAIN}.pth'
 
 PKL_PATH = 'autocorrection/input/luanvan/'

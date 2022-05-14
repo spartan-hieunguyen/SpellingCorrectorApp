@@ -6,34 +6,35 @@ import { Box, Button, TextField, Select, MenuItem, InputLabel, FormControl } fro
 
 export default function DemoField() {
     const [input, setInput] = useState('');
-    const [output, setOutput] = useState('');
+    const [output, setOutput] = useState({text: '', align: []});
     const [modelOption, setModelOption] = useState(MODEL_INDEX.TOKEN_CORRECTOR);
 
 
     const handleChangeInput = useCallback((event) => {
         setInput(event.target.value);
-    },[])
+    },[]);
 
     const handleChangeModel = useCallback((event) => {
       setModelOption(event.target.value);
-    },[])
+    },[]);
 
     function submit() {
       const requestOptions = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'Access-Control-Allow-Origin': '*'},
         body: JSON.stringify({ text: input, model: modelOption }),
       };
-      // console.log(text)
-      fetch("http://0.0.0.0:8000/correct", requestOptions)
+      fetch("http://127.0.0.1:8000/correct", requestOptions)
         .then((response) => response.json())
         .then((data) => {
-          console.log(data)
-          setOutput(data)
+          console.log(data);
+          setOutput({text: data.result.text, align: data.result.align})
         })
         .catch((error) => {
-          console.log(error)
-        })
+          console.log(error);
+        });
     }
   
     return (
@@ -78,5 +79,5 @@ export default function DemoField() {
             ></OutputAnnotation>
           </Box>
         </Box>
-    )
+    );
 }
