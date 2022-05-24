@@ -86,6 +86,20 @@ class AutoCorrection:
         words = sentence.split()
         detection_prob, detection_indexs, correction_prob, correction_indexs = \
             self.argmax_tensor(detection_outputs, correction_outputs)
+
+        for i, p in zip(detection_indexs, detection_prob):
+            print(i, p)
+  
+        for d_i, d_p, c_i, c_p in zip(detection_indexs, detection_prob, correction_indexs, correction_prob):
+            word = self.word_tokenizer.sequences_to_texts([[c_i]])[0]
+            print(f"{d_i}\t{d_p}\t{word}\t{c_p}")
+        
+        for index, (i, p) in enumerate(zip(correction_indexs, correction_prob)):
+            if p > self.threshold_correction:
+                word = self.word_tokenizer.sequences_to_texts([[i]])[0]
+                if word != words[index]:
+                    detection_indexs[index] = 1
+             
         for index, value in enumerate(detection_prob):
             # if the probability for not the spell word is less then threshold, it's is spell word
             if value < self.threshold_detection and detection_indexs[index] == 0:
@@ -230,7 +244,10 @@ class AutoCorrection:
         return output
           
     def _concat_spans(self, spans):
-        sorted_spans = sorted(spans, key=lambda d: d['start']) 
+        if not spans:
+            return spans
+        sorted_spans = sorted(spans, key=lambda d: (d['start'], d["end"]))
+        # print(sorted_spans)
         results = [sorted_spans[0]]
         for span in sorted_spans[1:]:
             if span["start"] <= results[-1]["end"]:
@@ -249,22 +266,24 @@ class AutoCorrection:
         
         repaired_sentences = " ".join([pair[0] for pair in pairs])
         
-        if mode == 0:
+        if mode in [0, 2]:
             _, char_aligns = perfect_align(repaired_sentences, input_sentences)
             for src, trg, idx in char_aligns:
-                src = src[len("CHANGE_"):]
+                src = src[7:]
                 if src == " " and trg == "":
                     start, end = idx
-                    for i in range(idx[1] - 1, -1, -1):
+                    for i in range(start - 1, -1, -1):
                         if repaired_sentences[i] != " ":
                             start -= 1
+                        else:
+                            break
                             
                     spans.append({
                         "start": start,
                         "end": end
                     })
             spans = self._concat_spans(spans)
-
+        if mode == 0:
             return repaired_sentences, spans
         else:
             for original_sentence, data in pairs:
@@ -294,6 +313,7 @@ class AutoCorrection:
                     "start": start,
                     "end": end
                 })
+
             # for src, trg, idx in char_aligns:
             #     src = src[len("CHANGE_"):]
             #     if src != trg and src not in string.punctuation:
@@ -305,4 +325,5 @@ class AutoCorrection:
             # for span in spans:
             #     print(results[span["start"]:span["end"]])
             spans = self._concat_spans(spans)
+
             return results.strip(), spans
