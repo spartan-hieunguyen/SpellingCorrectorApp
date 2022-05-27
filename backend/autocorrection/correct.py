@@ -1,9 +1,11 @@
 import re
 import string
+import time
 from itertools import groupby
 
 import numpy as np
 import nltk
+from string import punctuation
 nltk.download("punkt")
 from nltk import sent_tokenize, word_tokenize
 from transformers import AutoTokenizer
@@ -14,7 +16,8 @@ from autocorrection.params import *
 from autocorrection.vietnamese_normalizer import VietnameseNormalizer
 from autocorrection.postprocess import RuleBasedPostprocessor
 from autocorrection.get_corrector import get_corrector
-from autocorrection.test import perfect_align
+from autocorrection.test import perfect_align, align_sentence
+
 
 class AutoCorrection:
     def __init__(self, threshold_detection=0.7, threshold_correction=0.6, use_detection_context=False):
@@ -86,37 +89,35 @@ class AutoCorrection:
         words = sentence.split()
         detection_prob, detection_indexs, correction_prob, correction_indexs = \
             self.argmax_tensor(detection_outputs, correction_outputs)
-
-        for i, p in zip(detection_indexs, detection_prob):
-            print(i, p)
-  
-        for d_i, d_p, c_i, c_p in zip(detection_indexs, detection_prob, correction_indexs, correction_prob):
-            word = self.word_tokenizer.sequences_to_texts([[c_i]])[0]
-            print(f"{d_i}\t{d_p}\t{word}\t{c_p}")
-        
+            
         for index, (i, p) in enumerate(zip(correction_indexs, correction_prob)):
             if p > self.threshold_correction:
                 word = self.word_tokenizer.sequences_to_texts([[i]])[0]
                 if word != words[index]:
                     detection_indexs[index] = 1
-             
-        for index, value in enumerate(detection_prob):
-            # if the probability for not the spell word is less then threshold, it's is spell word
-            if value < self.threshold_detection and detection_indexs[index] == 0:
-                detection_indexs[index] = 1
+                    
+                if word == "<unk>":
+                    detection_indexs[index] = 0
 
+        for d_i, d_p, c_i, c_p in zip(detection_indexs, detection_prob, correction_indexs, correction_prob):
+            word = self.word_tokenizer.sequences_to_texts([[c_i]])[0]
+            print(f"{d_i}\t{d_p}\t{word}\t{c_p}")
+
+        for index, _ in enumerate(detection_prob):
             if index in convert_word.keys():
                 detection_indexs[index] = 1
-                correction_indexs[index] = self.word_tokenizer.texts_to_sequences([convert_word[index]])[0][0]
-
+                # correction_indexs[index] = self.word_tokenizer.texts_to_sequences([convert_word[index]])[0][0]
+            # if correction_prob[index] > self.threshold_correction:
+            #     word = self.word_tokenizer.sequences_to_texts([correction_indexs[index]])[0]
+            #     if word != words[index]:
+            #         detection_indexs[index] = 1                
+            #     detection_indexs[index] = 1                
+                
         wrong_word_indexs = np.where(detection_indexs == 1)[0]
         word_predict = correction_indexs[wrong_word_indexs]
         word_predict = self.word_tokenizer.sequences_to_texts([word_predict])[0].split()
         if len(wrong_word_indexs) > 0:
             for index1, index2 in zip(wrong_word_indexs, range(len(word_predict))):
-                if words[index1] == word_predict[index2]:
-                    detection_indexs[index1] = 0
-                    continue
                 # if a word is out of vocabulary, then the probability for word prediction need greater than a
                 # threshold,else predict with normal
                 if correction_prob[index1] > self.threshold_correction:
@@ -124,8 +125,29 @@ class AutoCorrection:
                 else:
                     detection_indexs[index1] = 0
                     
-        # assert len(words) == len(detection_indexs) == len(correction_indexs)
         return words, detection_indexs.tolist(), correction_indexs.tolist()
+        # return " ".join(words), detection_indexs.tolist(), correction_indexs.tolist()
+
+    # def get_result(self, convert_word, sentence, detection_outputs, correction_outputs):
+    #         words = sentence.split()
+    #         detection_prob, detection_indexs, correction_prob, correction_indexs = \
+    #             self.argmax_tensor(detection_outputs, correction_outputs)
+                
+    #         for index, value in enumerate(detection_prob):
+    #             if index in convert_word.keys() and correction_prob[index] > self.threshold_correction:
+    #                 detection_indexs[index] = 1
+    #                 correction_indexs[index] = self.word_tokenizer.texts_to_sequences([convert_word[index]])[0][0]
+
+    #         wrong_word_indexs = np.where(detection_indexs == 1)[0]
+    #         word_predict = correction_indexs[wrong_word_indexs]
+    #         word_predict = self.word_tokenizer.sequences_to_texts([word_predict])[0].split()
+    #         if len(wrong_word_indexs) > 0:
+    #             for index1, index2 in zip(wrong_word_indexs, range(len(word_predict))):
+    #                 # if a word is out of vocabulary, then the probability for word prediction need greater than a
+    #                 # threshold,else predict with normal
+    #                 if correction_prob[index1] > self.threshold_correction:
+    #                     words[index1] = word_predict[index2]
+    #         return " ".join(words), detection_indexs.tolist(), correction_indexs.tolist()
 
     def forward(self, original_sentence):
         convert_word = {}
@@ -204,9 +226,17 @@ class AutoCorrection:
     def _preprocess_sentences(self, sents, mode):
         sentences = sent_tokenize(sents)
         result = []
+                
         for s in sentences:
-            if mode in [0, 2]:
-                s = self.tokenization_repair.correct(s)
+            sentence, mark_replaces = mark_special_token(s)
+            try:
+                if mode in [0, 2]:
+                    sentence = self.tokenization_repair.correct(sentence)
+                    sentence = reverse_tok_special(sentence)
+                    s = self.restore_sentence(sentence, mark_replaces)                    
+            except:
+                pass
+            
             tokens = tokenize(s)
             data = {}
             data["gap"] = self._findAllGap(s, tokens)
@@ -222,6 +252,12 @@ class AutoCorrection:
             data["case"] = cases
 
             # ready = ' '.join([t.lower() for t in tokens])
+            # if mode in [0, 2]:
+            #     sentence = self.tokenization_repair.correct(' '.join(tokens))
+            # else:
+            #     sentence = ' '.join(tokens)
+            # result.append([sentence, data])
+                # s = self.tokenization_repair.correct(s)
             result.append([' '.join(tokens), data])
         return result
 
@@ -256,74 +292,103 @@ class AutoCorrection:
                 results.append(span)
         return results
             
-    def correction(self, input_sentences, mode):
+    def correction(self, input_sentences, mode, p_ins=4, p_dels=4):
         results = ""
         spans = []
-        detection_outputs = []
-        
+        # detection_outputs = []
         input_sentences = preprocess(input_sentences)        
         pairs = self._preprocess_sentences(input_sentences, mode)
+        print(pairs)
+        # repaired_sentences = " ".join([pair[0] for pair in pairs])
         
-        repaired_sentences = " ".join([pair[0] for pair in pairs])
+        # if mode in [0, 2]:                        
+        #     tags, _, trgs = align_sentence(input_sentences, repaired_sentences)
+        #     for tag, trg in zip(tags, trgs):
+        #         if tag not in ["KEEP", "DELETE"]:
+        #             print(trg)
+        #             trg = re.sub(r'([\.\(\)\*\?\!\~\^\[\]\{\}])', r'\\\1', trg)
+        #             query = r'\b{}\b'.format(trg)
+        #             match = re.search(query, repaired_sentences)
+        #             if match:
+        #                 start, end = match.span()
+        #                 spans.append({
+        #                     "start": start,
+        #                     "end": end
+        #                 })        
+
+        #     spans = self._concat_spans(spans)
         
-        if mode in [0, 2]:
-            _, char_aligns = perfect_align(repaired_sentences, input_sentences)
-            for src, trg, idx in char_aligns:
-                src = src[7:]
-                if src == " " and trg == "":
-                    start, end = idx
-                    for i in range(start - 1, -1, -1):
-                        if repaired_sentences[i] != " ":
-                            start -= 1
-                        else:
-                            break
-                            
-                    spans.append({
-                        "start": start,
-                        "end": end
-                    })
-            spans = self._concat_spans(spans)
         if mode == 0:
+            repaired_sentences = ""
+            for original_sentence, data in pairs:
+                repaired_sentences += " " + self._match_case(original_sentence, original_sentence, data)
+            repaired_sentences = repaired_sentences.strip()
+
+            repaired_sentences = self.postprocessor.correct(repaired_sentences)
+            tags, _, trgs = align_sentence(input_sentences, repaired_sentences)
+            for tag, trg in zip(tags, trgs):
+                if tag not in ["KEEP", "DELETE"]:
+                    trg = re.sub(r'([\.\(\)\*\?\!\~\^\[\]\{\}])', r'\\\1', trg)
+                    query = r'\b{}\b'.format(trg)
+                    match = re.search(query, repaired_sentences)
+                    if match:
+                        start, end = match.span()
+                        spans.append({
+                            "start": start,
+                            "end": end
+                        })        
+
+            spans = self._concat_spans(spans)            
             return repaired_sentences, spans
         else:
             for original_sentence, data in pairs:
-                words, detection_predict, _ = self.forward(original_sentence.lower())
-                detection_predict = self._process_detection(words, detection_predict)
-                detection_outputs.extend(detection_predict)
+                tmp = original_sentence.lower() 
+                try:
+                    words, _, _    = self.forward(tmp)
+                    sentence = " ".join(words)
+                except:
+                    sentence = tmp
                 
-                results = results + ' ' + self._match_case(original_sentence, " ".join(words), data)
+                # words, detection_predict, _ = self.forward(tmp)
+                # detection_predict = self._process_detection(words, detection_predict)
+                # detection_outputs.extend(detection_predict)
+                # results = results + ' ' + self._match_case(original_sentence, " ".join(words), data)
+                
+                results = results + ' ' + self._match_case(original_sentence, sentence, data)
                 results = self.postprocessor.correct(results)
 
             results = results.strip()
-
-            span_splits = list(self._splitWithIndices(results))
-            detection_outputs = np.array(detection_outputs)
-            error_idx = np.where(detection_outputs==1)[0]
-
-            _, char_aligns = perfect_align(results, input_sentences)
-
-            for idx in error_idx:
-                start, end = span_splits[idx]
-                word = results[start:end]
-                if word[0] in string.punctuation and word[-1] in string.punctuation:
-                    start += 1
-                    end -=1
-                
-                spans.append({
-                    "start": start,
-                    "end": end
-                })
-
-            # for src, trg, idx in char_aligns:
-            #     src = src[len("CHANGE_"):]
-            #     if src != trg and src not in string.punctuation:
-            #         spans.append({
-            #             "start": idx[0],
-            #             "end": idx[1]
-            #         })
             
-            # for span in spans:
-            #     print(results[span["start"]:span["end"]])
-            spans = self._concat_spans(spans)
+            tags, _, trgs = align_sentence(input_sentences, results)
+            for tag, trg in zip(tags, trgs):
+                if tag not in ["KEEP", "DELETE"]:
+                    trg = re.sub(r'([\.\(\)\*\?\!\~\^\[\]\{\}])', r'\\\1', trg)
+                    query = r'\b{}\b'.format(trg)
+                    match = re.search(query, results)
+                    if match:
+                        start, end = match.span()
+                        spans.append({
+                            "start": start,
+                            "end": end
+                        })        
 
+            spans = self._concat_spans(spans)
+            # span_splits = list(self._splitWithIndices(results))
+            # detection_outputs = np.array(detection_outputs)
+            # error_idx = np.where(detection_outputs==1)[0]
+
+            # for idx in error_idx:
+            #     start, end = span_splits[idx]
+            #     word = results[start:end]
+            #     if word[0] in string.punctuation and word[-1] in string.punctuation:
+            #         start += 1
+            #         end -=1
+                
+            #     spans.append({
+            #         "start": start,
+            #         "end": end
+            #     })
+            spans = self._concat_spans(spans)
+            for span in spans:
+                print(span)
             return results.strip(), spans

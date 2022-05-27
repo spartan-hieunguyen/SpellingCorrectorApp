@@ -55,7 +55,7 @@ function OutputAnnotation({text, spans}) {
   return (
     // <div className={"output__box"}>
     // </div>
-    <Typography paragraph align="left" sx={{fontSize: '1.2rem', margin:"10px", marginTop: "15px"}}>
+    <Typography paragraph align="left" style={{maxHeight: 540, overflow: "auto"}} sx={{fontSize: '1.2rem', margin:"10px", marginTop: "15px"}}>
     {output}
     </Typography>
   )

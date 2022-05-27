@@ -36,8 +36,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-autocorrection = AutoCorrection()
-
+autocorrection = AutoCorrection(threshold_correction=0.4)
 
 @app.post("/correct")
 async def correct_sentence(request: Request):
@@ -47,14 +46,16 @@ async def correct_sentence(request: Request):
     
     sent = data["text"]
     mode = data["model"]
-    
+    # p_ins = data["p_ins"]
+    # p_del = data["p_del"]
     # print(mode)
-    corrected, align = autocorrection.correction(sent, mode)
-    # try:
-    #     corrected = autocorrection.correction(sent, mode)
-    # except Exception as e:
-    #     corrected = sent
-    #     logging.warning(e)
+    # corrected, align = autocorrection.correction(sent, mode)
+    try:
+        corrected, align = autocorrection.correction(sent, mode)
+    except Exception as e:
+        corrected = sent
+        align = []
+        logging.warning(e)
         
     return {
         "result": {

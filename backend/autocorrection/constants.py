@@ -8,8 +8,8 @@ PUNCT = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
 
 # TOKENIZATION_REPAIR
 APPROACH = "CUSTOM"
-P_INS = 0
-P_DEL = 0
+P_INS = 6
+P_DEL = 6
 PENALTIES = ""
 FWD = "lm/unilm"
 BID = None

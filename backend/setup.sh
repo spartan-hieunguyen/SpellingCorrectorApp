@@ -15,8 +15,9 @@ cd ../..
 
 cd tokenization_repair
 mkdir data/estimators/
+mkdir data/estimators/bilabel
 mkdir data/estimators/lm/
 cd data/estimators
-gdown https://drive.google.com/drive/folders/1zhtQmPTah7qneEHPHuFHuf3qd5R047-W -O / --folder
+gdown https://drive.google.com/drive/folders/10VEon3SA1JeNYDNkGJ6QThaXCYZz9yrO -O ./ --folder
 cd ../lm
-gdown https://drive.google.com/drive/folders/1lG3swcUyUPYOf4ziJGfPQboaYtD5SgTM -O / --folder
+gdown https://drive.google.com/drive/folders/1t5mf6goxUdn8_QU6VLBXkWzOZNBh5jFQ -O ./ --folder
