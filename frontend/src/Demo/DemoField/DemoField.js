@@ -2,13 +2,18 @@ import './DemoField.css'
 import { MODEL_INDEX, MODEL_NAME } from '../../constants';
 import React, {useCallback, useState} from 'react';
 import OutputAnnotation from './OutputAnnotation/OutputAnnotation';
-import { Box, Button, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { Box, Button, TextField, Select, MenuItem, InputLabel, FormControl, Slider, Typography, Grid, Input } from '@mui/material';
+
+function valuetext(value) {
+  return `${value}°C`;
+}
 
 export default function DemoField() {
     const [input, setInput] = useState('');
     const [output, setOutput] = useState({text: '', align: []});
     const [modelOption, setModelOption] = useState(MODEL_INDEX.TOKEN_CORRECTOR);
-
+    const [insertPenalty, setInsertPenalty] = useState(4);
+    const [deletePenalty, setDeletePenalty] = useState(4);
 
     const handleChangeInput = useCallback((event) => {
         setInput(event.target.value);
@@ -18,13 +23,44 @@ export default function DemoField() {
       setModelOption(event.target.value);
     },[]);
 
+    const handleInsertSliderChange = (event, newValue) => {
+      setInsertPenalty(newValue);
+    };
+    const handleDeleteSliderChange = (event, newValue) => {
+      setDeletePenalty(newValue);
+    };
+    const handleInsertInputChange = (event) => {
+      setInsertPenalty(event.target.value === '' ? 0 : Number(event.target.value));
+    }
+    const handleDeleteInputChange = (event) => {
+      setDeletePenalty(event.target.value === '' ? 0 : Number(event.target.value));
+    }
+    const handleInsertBlur = () => {
+      if (insertPenalty < 0) {
+        setInsertPenalty(0);
+      } else if (insertPenalty > 20) {
+        setInsertPenalty(20);
+      }
+    }
+    const handleDeleteBlur = () => {
+      if (deletePenalty < 0) {
+        setDeletePenalty(0);
+      } else if (deletePenalty > 20) {
+        setDeletePenalty(20);
+      }
+    }
     function submit() {
       const requestOptions = {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
           'Access-Control-Allow-Origin': '*'},
-        body: JSON.stringify({ text: input, model: modelOption }),
+        body: JSON.stringify({ 
+          text: input, 
+          model: modelOption,
+          insertPenalty: insertPenalty,
+          deletePenalty: deletePenalty,
+        }),
       };
       fetch("http://127.0.0.1:8000/correct", requestOptions)
         .then((response) => response.json())
@@ -39,7 +75,7 @@ export default function DemoField() {
   
     return (
         <Box sx={{display: "flex", flexWrap: "wrap", justifyContent:"center", alignItems:"center", columnGap: "10px", rowGap: "30px", paddingTop: "30px"}}>
-          <Box sx={{width: "40%", height:"560px", minWidth:"450px", display: "flex", flexDirection:"column", justifyContent:"space-between"}}>
+          <Box sx={{width: "35%", height:"560px", minWidth:"450px", display: "flex", flexDirection:"column", justifyContent:"space-between"}}>
               <TextField
               variant="outlined"
               multiline={true}
@@ -71,12 +107,80 @@ export default function DemoField() {
             <Button fullWidth variant="contained" onClick={submit}>Check</Button>
           </Box>
 
-          <Box sx={{width: "40%", minWidth:"450px", height:"560px", border:"1px solid silver", borderRadius:"5px"}} label={modelOption}>
-            {/* <OutputAnnotation text={"Thông qua công tác tuyên truyền, vận động này phụ huynh sẽ hiểu rõ hơn tầm quan trọng của việc giáo dục ý thức bảo vệ môi trường cho trẻ không phải chỉ ở phía nhà trường mà còn ở gia đình, góp phần vào việc gìn giữ môi trường xanh, sạch, đẹp."} spans={[{"start":226,"end":230}]}/> */}
+          <Box sx={{width: "35%", minWidth:"450px", height:"560px", border:"1px solid silver", borderRadius:"5px"}} label={modelOption}>
             <OutputAnnotation
             text={output.text}
             spans={output.align}
             ></OutputAnnotation>
+          </Box>
+          <Box sx={{display: "flex", width: "80%" ,justifyContent:"center",columnGap: "30px"}}>
+            <Box sx={{width: "40%"}}>
+            <Typography id="input-slider" gutterBottom>
+              Insert Penalty
+            </Typography>
+            <Grid container spacing={2} alignItems="center">
+            <Grid item xs>
+              <Slider
+                value={insertPenalty}
+                onChange={handleInsertSliderChange}
+                aria-labelledby="input-slider"
+                step={0.5}
+                marks
+                min={0}
+                max={20}
+              />
+            </Grid>
+            <Grid item>
+              <Input
+                value={insertPenalty}
+                size="small"
+                onChange={handleInsertInputChange}
+                onBlur={handleInsertBlur}
+                inputProps={{
+                  step: 0.5,
+                  min: 0,
+                  max: 20,
+                  type: 'number',
+                  'aria-labelledby': 'input-slider',
+                }}
+              />
+            </Grid>
+            </Grid>
+            </Box>
+
+            <Box sx={{width: "40%"}}>
+            <Typography id="input-slider" gutterBottom>
+              Delete Penalty
+            </Typography>
+            <Grid container spacing={2} alignItems="center">
+            <Grid item xs>
+              <Slider
+                value={deletePenalty}
+                onChange={handleDeleteSliderChange}
+                aria-labelledby="input-slider"
+                step={0.5}
+                marks
+                min={0}
+                max={20}
+              />
+            </Grid>
+            <Grid item>
+              <Input
+                value={deletePenalty}
+                size="small"
+                onChange={handleDeleteInputChange}
+                onBlur={handleDeleteBlur}
+                inputProps={{
+                  step: 0.5,
+                  min: 0,
+                  max: 20,
+                  type: 'number',
+                  'aria-labelledby': 'input-slider',
+                }}
+              />
+            </Grid>
+            </Grid>
+            </Box>
           </Box>
         </Box>
     );
