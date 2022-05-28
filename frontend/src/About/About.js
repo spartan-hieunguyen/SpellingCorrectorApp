@@ -1,4 +1,11 @@
 import {Typography, Box} from '@mui/material'
+import unigram from "../image/model/unigram.png"
+import bilabel from "../image/model/bilabel.png"
+import bert_ft from "../image/model/bert_ft.png"
+import pipeline from "../image/model/pipeline.png"
+import result_vsec from "../image/model/result_vsec.png"
+import result_viwiki from "../image/model/result_viwiki.png"
+import result_augment from "../image/model/result_augment.png"
 
 function About() {
     return <>
@@ -16,36 +23,36 @@ Abstract and Motivation</Typography> */}
         Tokenization Repair Model
         </Typography>
         <Typography paragraph align="left" >
-        <Box sx={{paddingLeft: "15%", paddingRight: "15%", paddingTop: "20px"}}>
-        <Typography paragraph align="left"  sx={{}}>
-TODO        </Typography>
+        <Box sx={{paddingLeft: "15%", paddingRight: "15%", paddingTop: "20px", display:"flex", flexDirection:"column", justifyContent: "center", rowGap: "30px", alignItems:"center"}}>
+        <img src={unigram} alt="" />
+        <img src={bilabel} alt="" />
+
         </Box>
         </Typography>
         <Typography variant="h5" component="div" sx={{ flexGrow: 1, paddingTop: "50px", fontWeight: 'bold' }}>
         Correction Model
         </Typography>
         <Typography paragraph align="left" >
-        <Box sx={{paddingLeft: "15%", paddingRight: "15%", paddingTop: "20px"}}>
-        <Typography paragraph align="left"  sx={{}}>
-TODO        </Typography>
+        <Box sx={{paddingLeft: "15%", paddingRight: "15%", paddingTop: "20px", display:"flex", flexDirection:"column", justifyContent: "center", rowGap: "30px", alignItems:"center"}}>
+        <img src={bert_ft} alt="" />
         </Box>
         </Typography>
         <Typography variant="h5" component="div" sx={{ flexGrow: 1, paddingTop: "50px", fontWeight: 'bold' }}>
         Full Pipeline
         </Typography>
         <Typography paragraph align="left" >
-        <Box sx={{paddingLeft: "15%", paddingRight: "15%", paddingTop: "20px"}}>
-        <Typography paragraph align="left"  sx={{}}>
-TODO        </Typography>
+        <Box sx={{paddingLeft: "15%", paddingRight: "15%", paddingTop: "20px", display:"flex", flexDirection:"column", justifyContent: "center", rowGap: "30px", alignItems:"center"}}>
+        <img src={pipeline} alt="" />
         </Box>
         </Typography>
         <Typography variant="h5" component="div" sx={{ flexGrow: 1, paddingTop: "50px", fontWeight: 'bold' }}>
         Result
         </Typography>
         <Typography paragraph align="left" >
-        <Box sx={{paddingLeft: "15%", paddingRight: "15%", paddingTop: "20px"}}>
-        <Typography paragraph align="left"  sx={{}}>
-TODO        </Typography>
+        <Box sx={{paddingLeft: "15%", paddingRight: "15%", paddingTop: "20px", display:"flex", flexDirection:"column", justifyContent: "center", rowGap: "30px", alignItems:"center"}}>
+        <img src={result_augment} alt="" style={{width: "600px"}}/>
+        <img src={result_vsec} alt="" style={{width: "600px"}}/>
+        <img src={result_viwiki} alt="" style={{width: "600px"}}/>
         </Box>
         </Typography>
         <Typography variant="h5" component="div" sx={{ flexGrow: 1, paddingTop: "50px", fontWeight: 'bold' }}>
@@ -53,8 +60,6 @@ TODO        </Typography>
         </Typography>
         <Typography paragraph align="left" >
         <Box sx={{paddingLeft: "15%", paddingRight: "15%", paddingTop: "20px"}}>
-        <Typography paragraph align="left"  sx={{}}>
-TODO        </Typography>
         </Box>
         </Typography>
     </>

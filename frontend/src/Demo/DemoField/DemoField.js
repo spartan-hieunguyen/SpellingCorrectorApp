@@ -4,9 +4,6 @@ import React, {useCallback, useState} from 'react';
 import OutputAnnotation from './OutputAnnotation/OutputAnnotation';
 import { Box, Button, TextField, Select, MenuItem, InputLabel, FormControl, Slider, Typography, Grid, Input } from '@mui/material';
 
-function valuetext(value) {
-  return `${value}°C`;
-}
 
 export default function DemoField() {
     const [input, setInput] = useState('');
