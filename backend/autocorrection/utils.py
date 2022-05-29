@@ -132,10 +132,10 @@ def mark_special_token(sentence):
     tokens = word_tokenize(sentence)
     index_special = defaultdict(list)
     for i in range(len(tokens)):
-        if is_number(tokens[i]):
-            index_special['numberic'].append(tokens[i])
-            tokens[i] = 'numberic'
-        elif is_date(tokens[i]):
+        # if is_number(tokens[i]):
+        #     index_special['numberic'].append(tokens[i])
+        #     tokens[i] = 'numberic'
+        if is_date(tokens[i]):
             index_special['date'].append(tokens[i])
             tokens[i] = 'date'
         # elif is_special_token(tokens[i]):

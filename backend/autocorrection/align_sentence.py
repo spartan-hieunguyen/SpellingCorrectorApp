@@ -4,6 +4,7 @@ import numpy as np
 import re
 from edlib import align, getNiceAlignment
 
+TOKENIZER_REGEX = re.compile(r'(\W)')
 SEQ_DELIMETERS = {"tokens": " ",
                   "labels": "SEPL|||SEPR",
                   "operations": "SEPL__SEPR"}
@@ -21,6 +22,7 @@ def check_split(source_token, target_tokens):
         return "$TRANSFORM_SPLIT_HYPHEN"
     else:
         return None
+    
     
 def apply_transformation(source_token, target_token):
     target_tokens = target_token.split()
@@ -93,6 +95,7 @@ def perfect_align(t, T, insertions_allowed=0,
 
     return dp[len(t), len(T)].min(), list(reversed(alignment))
 
+
 def smoke_cigar(cigar, src=[], trg=[]):
   ans = []
   number = 0
@@ -123,11 +126,11 @@ def smoke_cigar(cigar, src=[], trg=[]):
 
   return ans
 
-TOKENIZER_REGEX = re.compile(r'(\W)')
 
 def tokenizer(text):
     tokens = TOKENIZER_REGEX.split(text)
     return [t for t in tokens if len(t.strip()) > 0]
+
 
 def getNiceAlignment(alignResult, query, target, gapSymbol="-"):
     target_pos = alignResult["locations"][0][0]
@@ -187,6 +190,7 @@ def getNiceAlignment(alignResult, query, target, gapSymbol="-"):
                 "The CIGAR string from alignResult contains a symbol not '=', 'X', 'D', 'I'. Please check the validity of alignResult and alignResult.cigar")
 
     return tags, toks, trgs
+
 
 def align_sentence(sent1, sent2):
     """from sent1 -> sent2"""

@@ -42,7 +42,7 @@ FINE_TUNED = True
 # Batch size samples
 BATCH_SIZE=64
 
-DOMAIN = '0'
+DOMAIN = '_final'
 N_WORDS = {
     'luanvan': 323430,
     'general': 57981

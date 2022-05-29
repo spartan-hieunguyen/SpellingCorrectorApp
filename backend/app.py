@@ -36,22 +36,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-autocorrection = AutoCorrection(threshold_correction=0.4)
+autocorrection = AutoCorrection(threshold_correction=0.5)
 
 @app.post("/correct")
 async def correct_sentence(request: Request):
     data = await request.json()
     
     data = dict(data)
-    
+    print(data)
     sent = data["text"]
     mode = data["model"]
-    # p_ins = data["p_ins"]
-    # p_del = data["p_del"]
-    # print(mode)
-    # corrected, align = autocorrection.correction(sent, mode)
+    p_ins = data["insertPenalty"]
+    p_del = data["deletePenalty"]
+
     try:
-        corrected, align = autocorrection.correction(sent, mode)
+        corrected, align = autocorrection.correct(sent, mode, p_ins, p_del)
     except Exception as e:
         corrected = sent
         align = []
@@ -66,9 +65,9 @@ async def correct_sentence(request: Request):
 
 
 if __name__ == "__main__":  
-    # uvicorn.run(
-    #     app, 
-    #     host=config_app['server']['ip_address'], 
-    #     port=config_app['server']['port']
-    # )
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        app, 
+        host=config_app['server']['ip_address'], 
+        port=config_app['server']['port']
+    )
+    # uvicorn.run(app, host="0.0.0.0", port=8000)

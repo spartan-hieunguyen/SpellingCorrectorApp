@@ -1,12 +1,10 @@
 from typing import Optional
 
-from autocorrection.src.estimator.bidirectional_labeling_estimator import BidirectionalLabelingEstimator
-from autocorrection.src.estimator.unidirectional_lm_estimator import UnidirectionalLMEstimator
-from autocorrection.src.corrector.beam_search.batched_beam_search_corrector import BatchedBeamSearchCorrector
+from autocorrection.tokenization_repair.src.estimator.bidirectional_labeling_estimator import BidirectionalLabelingEstimator
+from autocorrection.tokenization_repair.src.estimator.unidirectional_lm_estimator import UnidirectionalLMEstimator
+from autocorrection.tokenization_repair.src.corrector.beam_search.batched_beam_search_corrector import BatchedBeamSearchCorrector
 
-def get_corrector(approach: str,
-                  penalties: Optional[str],
-                  insertion_penalty: float = 0,
+def get_corrector(insertion_penalty: float = 0,
                   deletion_penalty: float = 0,
                   fwd_model_name: Optional[str] = None,
                   bid_model_name: Optional[str] = None):
@@ -29,14 +27,12 @@ def get_corrector(approach: str,
     return corrector
 
 if __name__ == "__main__":
-    approach = "CUSTOM"
     p_ins = 0
     p_del = 0
     penalties = ""
     fwd = "lm/unilm"
     bid = None
     
-    tokr = get_corrector(approach, penalties, p_ins, p_del,
-                            fwd_model_name=fwd, bid_model_name=bid)
+    tokr = get_corrector(p_ins, p_del, fwd_model_name=fwd, bid_model_name=bid)
     
     print(tokr.correct("hoomnaytoi dihojc"))
